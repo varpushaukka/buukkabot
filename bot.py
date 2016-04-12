@@ -22,15 +22,16 @@ class Bot:
         return(parsedlist)
 
     def parsemessage(self, m):
-        mgroup = m['message']['chat']['type']
-        mdate = m['message']['date']
-        msender = m['message']['from']['first_name'] + " " + m['message']['from']['last_name']
-        mtext = m['message']['text']
-        mmsgid = m['message']['message_id']
+        ms = m['message']
+        mgroup = ms['chat']['type']
+        mdate = ms['date']
+        msender = ms['from']['first_name'] + " " + m['message']['from']['last_name']
+        mtext = ms['text']
+        mmsgid = ms['message_id']
         return dict(msgid=mmsgid, date=mdate, sender=msender, text = mtext, group = mgroup)
 
     def savetodatabase(self, msg):
-        self.cur.execute('INSERT into messages VALUES (?, ?, ?, ?, ?)', (msg[msgid], msg[group], msg[date], msg[sender], msg[text]))
+        self.cur.execute('INSERT into messages VALUES (?, ?, ?, ?, ?)', (msg['msgid'], msg['group'], msg['date'], msg['sender'], msg['text']))
         self.conn.commit()
         
         
