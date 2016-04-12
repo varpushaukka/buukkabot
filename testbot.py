@@ -8,13 +8,15 @@ class Testbot(unittest.TestCase):
     def test_messagelist(self):
         ml = self.tbot.messagelist()
         self.assertIsInstance(ml, list)
-        all(self.assertIsInstance(x, dict) for x in ml)
-        all(self.assertIn('sender', x) for x in ml)
-        all(self.assertIn('text', x) for x in ml)
-        all(self.assertIn('group', x) for x in ml)
-        all(self.assertIn('date', x) for x in ml)
-        all(self.assertIn('msgid', x) for x in ml)
+        for x in ml: self.assertIsInstance(x, dict)
+        self.rightvaluesfound('sender', ml)
+        self.rightvaluesfound('text', ml)
+        self.rightvaluesfound('group', ml)
+        self.rightvaluesfound('date', ml)
+        self.rightvaluesfound('msgid', ml)
 
+    def rightvaluesfound(self, field, ml):
+        for x in ml: self.assertIn(field, x)
 
 if __name__ == '__main__':
     unittest.main()

@@ -12,16 +12,14 @@ class Bot:
         self.cur = self.conn.cursor()
 
     def messagelist(self):
-        while True:
-            r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates')
-            messages = r.content
-            jsonmessages = json.loads(messages.decode('utf-8'))
-            msglist = jsonmessages['result']
-            parsedlist = []
-            for x in msglist:
-                parsedlist.append(self.parsemessage(x))
-            time.sleep(3)
-            return(parsedlist)
+        r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates')
+        messages = r.content
+        jsonmessages = json.loads(messages.decode('utf-8'))
+        msglist = jsonmessages['result']
+        parsedlist = []
+        for x in msglist:
+            parsedlist.append(self.parsemessage(x))
+        return(parsedlist)
 
     def parsemessage(self, m):
         mgroup = m['message']['chat']['type']
@@ -29,9 +27,12 @@ class Bot:
         msender = m['message']['from']['first_name'] + " " + m['message']['from']['last_name']
         mtext = m['message']['text']
         mmsgid = m['message']['message_id']
-#        self.cur.execute('INSERT into messages VALUES (%i, %s, %i, %s, %s)', (mmsgid, mgroup, mdate, msender, mtext))
-#        self.conn.commit()
         return dict(msgid=mmsgid, date=mdate, sender=msender, text = mtext, group = mgroup)
+
+    def savetodatabase(self, msg):
+        self.cur.execute('INSERT into messages VALUES (?, ?, ?, ?, ?)', (msg[msgid], msg[group], msg[date], msg[sender], msg[text]))
+        self.conn.commit()
+        
         
 
 if __name__ == '__main__':
