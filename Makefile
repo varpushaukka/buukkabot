@@ -1,5 +1,8 @@
-run: import-schema
+run: import-schema bottle.py
 	python3 bot.py
+
+bottle.py:
+	wget http://bottlepy.org/bottle.py
 
 test-bot: import-schema
 	python3 testbot.py
