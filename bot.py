@@ -10,12 +10,19 @@ class Bot:
     def __init__(self, dbname):
         self.conn = sqlite3.connect(dbname)
         self.cur = self.conn.cursor()
+        self.offset = 0
 
-    def messagelist(self):
-        r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates')
+    def getupdatestolist(self):
+        if self.offset == 0: r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates')
+        else: r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates?offset=' +  self.offset)
         messages = r.content
         jsonmessages = json.loads(messages.decode('utf-8'))
         msglist = jsonmessages['result']
+        self.offset = msglist[-1]['update_id']
+        return msglist
+
+    def messagelist(self):
+        msglist = self.getupdatestolist()
         parsedlist = []
         for x in msglist:
             parsedlist.append(self.parsemessage(x))
@@ -34,7 +41,7 @@ class Bot:
         self.cur.execute('INSERT into messages VALUES (?, ?, ?, ?, ?)', (msg['msgid'], msg['group'], msg['date'], msg['sender'], msg['text']))
         self.conn.commit()
         
-        
+
 
 if __name__ == '__main__':
     b = Bot('logs')    
