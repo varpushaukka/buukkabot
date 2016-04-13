@@ -1,4 +1,5 @@
 from bottle import route, run
+import sqlite3
 
 class BotApi:
     
@@ -21,3 +22,7 @@ class BotApi:
     @route('searchbyword/<word>')
     def search_by_word(word):
         return 'foo'
+
+if __name__ == '__main__':
+    a = BotApi('logs')
+    run(host='localhost', port=8080)
