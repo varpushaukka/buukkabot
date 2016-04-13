@@ -28,11 +28,15 @@ class Bot:
             parsedlist.append(self.parsemessage(x))
         return(parsedlist)
 
+    def grouptitle(self, m):
+        if m['message']['chat']['type'] == 'private': return 'private'
+        else: return m['message']['chat']['title']
+
     def parsemessage(self, m):
         ms = m['message']
-        mgroup = ms['chat']['type']
+        mgroup = self.grouptitle(m)
         mdate = ms['date']
-        msender = ms['from']['first_name'] + " " + m['message']['from']['last_name']
+        msender = ms['from']['first_name'] + " " + ms['from']['last_name']
         mtext = ms['text']
         mmsgid = ms['message_id']
         return dict(msgid=mmsgid, date=mdate, sender=msender, text = mtext, group = mgroup)
