@@ -14,11 +14,12 @@ class Bot:
 
     def getupdatestolist(self):
         if self.offset == 0: r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates')
-        else: r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates?offset=' +  self.offset)
+        else: r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates?offset=' +  str(self.offset))
         messages = r.content
         jsonmessages = json.loads(messages.decode('utf-8'))
         msglist = jsonmessages['result']
-        self.offset = msglist[-1]['update_id']
+        if msglist == []: offset = 0      
+        else: self.offset = msglist[-1]['update_id'] + 1
         return msglist
 
     def messagelist(self):
@@ -45,8 +46,16 @@ class Bot:
         self.cur.execute('INSERT into messages VALUES (?, ?, ?, ?, ?)', (msg['msgid'], msg['group'], msg['date'], msg['sender'], msg['text']))
         self.conn.commit()
         
-
+    def runbot(self):
+        while True:
+            messages = self.messagelist()            
+            if messages:
+                for message in messages:
+                    self.savetodatabase(message)
+                    print(message)
+            time.sleep(3)
 
 if __name__ == '__main__':
-    b = Bot('logs')    
+    b = Bot('logs')
+    b.runbot()    
     print(b.messagelist())
