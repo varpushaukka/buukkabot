@@ -12,7 +12,7 @@ class Bot:
         self.cur = self.conn.cursor()
         self.offset = 0
 
-    def getupdatestolist(self):
+    def getupdatesaslist(self):
         if self.offset == 0: r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates')
         else: r = requests.get('https://api.telegram.org/bot' + token + '/getUpdates?offset=' +  str(self.offset))
         messages = r.content
@@ -23,7 +23,7 @@ class Bot:
         return msglist
 
     def messagelist(self):
-        msglist = self.getupdatestolist()
+        msglist = self.getupdatesaslist()
         parsedlist = []
         for x in msglist:
             parsedlist.append(self.parsemessage(x))
@@ -49,10 +49,9 @@ class Bot:
     def runbot(self):
         while True:
             messages = self.messagelist()            
-            if messages:
-                for message in messages:
-                    self.savetodatabase(message)
-                    print(message)
+            for message in messages:
+                self.savetodatabase(message)
+                print(message)
             time.sleep(3)
 
 if __name__ == '__main__':
