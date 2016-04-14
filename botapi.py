@@ -1,4 +1,4 @@
-from bottle import route, run
+from bottle import route, run, request
 import sqlite3
 
 class BotApi:
@@ -8,7 +8,8 @@ class BotApi:
         self.cur = self.conn.cursor()
 
     @route('/searchlogs')
-    def search_from_log_data(self, parameters):
+    def search_from_log_data(self):
+        param = self.request.decode()
         return 'foo'    
     
 if __name__ == '__main__':
