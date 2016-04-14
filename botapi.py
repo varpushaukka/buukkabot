@@ -8,7 +8,7 @@ class BotApi:
         self.cur = self.conn.cursor()
 
     @route('/searchlogs')
-    def search_from_log_data(self, parameters)
+    def search_from_log_data(self, parameters):
         return 'foo'    
     
 if __name__ == '__main__':
